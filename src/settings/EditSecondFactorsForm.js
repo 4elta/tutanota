@@ -83,8 +83,8 @@ export class EditSecondFactorsForm {
 		]
 	}
 
-	_updateSecondFactors(): void {
-		this._user.getAsync()
+	_updateSecondFactors(): Promise<void> {
+		return this._user.getAsync()
 		    .then(user => loadAll(SecondFactorTypeRef, neverNull(user.auth).secondFactors))
 		    .then(factors => {
 
@@ -349,9 +349,11 @@ export class EditSecondFactorsForm {
 			})
 	}
 
-	entityEventReceived(update: EntityUpdateData): void {
+	entityEventReceived(update: EntityUpdateData): Promise<void> {
 		if (isUpdateForTypeRef(SecondFactorTypeRef, update)) {
-			this._updateSecondFactors()
+			return this._updateSecondFactors()
+		} else {
+			return Promise.resolve()
 		}
 	}
 

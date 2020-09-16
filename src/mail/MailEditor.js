@@ -354,9 +354,9 @@ export class MailEditor {
 		}
 
 		this._entityEventReceived = (updates) => {
-			for (let update of updates) {
-				this._handleEntityEvent(update)
-			}
+			return Promise.each(updates, update => {
+				return this._handleEntityEvent(update)
+			}).return()
 		}
 
 		this.dialog = Dialog.largeDialog(headerBarAttrs, this)
@@ -1113,7 +1113,7 @@ export class MailEditor {
 		return buttonAttrs
 	}
 
-	_handleEntityEvent(update: EntityUpdateData): void {
+	_handleEntityEvent(update: EntityUpdateData): Promise<void> {
 		const {operation, instanceId, instanceListId} = update
 		if (isUpdateForTypeRef(ContactTypeRef, update)
 			&& (operation === OperationType.UPDATE || operation === OperationType.DELETE)) {
@@ -1132,6 +1132,7 @@ export class MailEditor {
 				})
 			})
 		}
+		return Promise.resolve()
 	}
 
 	_updateBubble(bubbles: Bubble<RecipientInfo> [], oldBubble: Bubble<RecipientInfo>, contactId: IdTuple) {
